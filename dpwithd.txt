@@ -1,0 +1,73 @@
+AIM:DINING PHILOSOPHER WITH DEADLOCK
+
+PROGRAM:
+public class Philosopher implements Runnable {
+ 
+    // The forks on either side of this Philosopher 
+    private Object leftFork;
+    private Object rightFork;
+ 
+    public Philosopher(Object leftFork, Object rightFork) {
+        this.leftFork = leftFork;
+        this.rightFork = rightFork;
+    }
+ 
+     private void doAction(String action) throws InterruptedException {
+        System.out.println(
+          Thread.currentThread().getName() + " " + action);
+        Thread.sleep(((int) (Math.random() * 100)));
+    }
+     public void run() {
+        try {
+            while (true) {
+                
+                // thinking
+                doAction(System.nanoTime() + ": Thinking");
+                synchronized (leftFork) {
+                    doAction(
+                      System.nanoTime() 
+                        + ": Picked up left fork");
+                    synchronized (rightFork) {
+                        // eating
+                        doAction(
+                          System.nanoTime() 
+                            + ": Picked up right fork - eating"); 
+                        
+                        doAction(
+                          System.nanoTime() 
+                            + ": Put down right fork");
+                    }
+                    
+                    // Back to thinking
+                    doAction(
+                      System.nanoTime() 
+                        + ": Put down left fork. Back to thinking");
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return;
+        }
+    }
+}
+ 
+OUTPUT:
+Y:\>cd program
+
+Y:\program>cd "dininig philosopher with deadlock (5)"
+
+Y:\program\dininig philosopher with deadlock (5)>cd dp
+
+Y:\program\dininig philosopher with deadlock (5)\dp>javac DiningPhilosophers.java
+
+Y:\program\dininig philosopher with deadlock (5)\dp>java DiningPhilosophers
+Philosopher 1 3315834652900: Thinking
+Philosopher 5 3315835084200: Thinking
+Philosopher 3 3315834802500: Thinking
+Philosopher 4 3315834815700: Thinking
+Philosopher 2 3315834682300: Thinking
+Philosopher 1 3315847982500: Picked up left fork
+Philosopher 2 3315867104400: Picked up left fork
+Philosopher 5 3315868107200: Picked up left fork
+Philosopher 4 3315912500800: Picked up left fork
+Philosopher 3 3315915773800: Picked up left fork
